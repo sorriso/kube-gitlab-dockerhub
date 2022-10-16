@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gitlab-deployment
+  namespace: devops
+  labels:
+    app: gitlab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gitlab
+  template:
+    metadata:
+      labels:
+        app: gitlab
+    spec:
+#      securityContext:
+#        fsGroup: 1000
+#        fsGroupChangePolicy: "OnRootMismatch"
+      containers:
+        - name: gitlab
+          image: l_gitlab:latest
+          imagePullPolicy: Never
+#          securityContext:
+#            runAsUser: 0
+#            runAsGroup: 0
+#            allowPrivilegeEscalation: true
+#            readOnlyRootFilesystem: false
+#            privileged: true
+#            capabilities:
+#              drop:
+#                - all
+          ports:
+          - containerPort: 80
+            protocol: TCP
+          - containerPort: 443
+            protocol: TCP
+          - containerPort: 22
+            protocol: TCP
+          resources:
+            limits:
+              cpu: 2000m
+              memory: 5Gi
+            requests:
+              cpu: 50m
+              memory: 2Gi
+          env:
+            - name: GITLAB_OMNIBUS_CONFIG
+              value: |
+                    external_url 'http://gitlab.kube.local:80'
+                    gitlab_rails['gitlab_shell_ssh_port'] = 22
+          volumeMounts:
+            - name: gitlab-storage
+              mountPath: /var/opt/gitlab
+              subPath: gitlab_data
+            - name: gitlab-storage
+              mountPath: /etc/gitlab
+              subPath: gitlab_configuration
+            - name: gitlab-storage
+              mountPath: /var/log/gitlab
+              subPath: gitlab_logs
+      volumes:
+        - name: gitlab-storage
+          persistentVolumeClaim:
+            claimName: gitlab-volume-claim
+                    # postgresql['enable'] = false
+                    # gitlab_rails['db_username'] = "admin"
+                    # Update with password from Databases for PostgreSQL password
+                    # gitlab_rails['db_password'] = "DATABASES_PG_PASSWORD"
+                    # # Update with password from Databases for PostgreSQL host endpoint
+                    # gitlab_rails['db_host'] = "DATABASES_PG_HOST"
+                    # # Update with password from Databases for PostgreSQL service port
+                    # gitlab_rails['db_port'] = "DATABASES_PG_PORT"
+                    # gitlab_rails['db_database'] = "ibmclouddb"
+                    # gitlab_rails['db_adapter'] = 'postgresql'
+                    # gitlab_rails['db_encoding'] = 'utf8'
+                    # redis['enable'] = false
+                    # gitlab_rails['redis_host'] = 'redis'
+                    # gitlab_rails['redis_port'] = '6379'
+                    # gitlab_rails['gitlab_shell_ssh_port'] = 30022

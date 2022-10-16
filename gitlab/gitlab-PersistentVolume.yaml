@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: gitlab-volume
+  namespace: devops
+spec:
+  storageClassName: local-path
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: "/Users/olivier/Documents/GitHub/kube-gitlab-dockerhub/volume/gitlab"
+  capacity:
+    storage: 1Gi
+  claimRef:
+    name: gitlab-volume-claim
+    namespace: devops
