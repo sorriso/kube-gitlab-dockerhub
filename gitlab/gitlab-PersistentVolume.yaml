@@ -10,7 +10,7 @@ spec:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   hostPath:
-    path: "/Users/olivier/Documents/GitHub/kube-gitlab-dockerhub/volume/gitlab"
+    path: "/Users/sorriso/Documents/GitHub/kube-gitlab-dockerhub/volume/gitlab"
   capacity:
     storage: 1Gi
   claimRef:
